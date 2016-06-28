@@ -2,6 +2,7 @@
 
 from __future__ import division
 from collections import Counter
+from collections import defaultdict
 
 users = [
 { "id": 0, "name": "Hero" },
@@ -81,3 +82,40 @@ interests = [
 (8, "Big Data"), (8, "artificial intelligence"), (9, "Hadoop"),
 (9, "Java"), (9, "MapReduce"), (9, "Big Data")
 ]
+
+def data_scientists_who_like(target_interest):
+    return [user_id
+        for user_id, user_interest in interests
+        if user_interest == target_interest]
+
+# keys are interests, values are lists of user_ids with that interest
+user_ids_by_interest = defaultdict(list)
+for user_id, interest in interests:
+    user_ids_by_interest[interest].append(user_id)
+
+interests_by_user_id = defaultdict(list)
+
+for user_id, interest in interests:
+    interests_by_user_id[user_id].append(interest)
+
+def most_common_interests_with(user):
+    return Counter(interested_user_id
+        for interest in interests_by_user_id[user["id"]]
+        for interested_user_id in user_ids_by_interest[interest]
+        if interested_user_id != user["id"])
+
+salaries_and_tenures = [(83000, 8.7), (88000, 8.1),
+                        (48000, 0.7), (76000, 6),
+                        (69000, 6.5), (76000, 7.5),
+                        (60000, 2.5), (83000, 10),
+                        (48000, 1.9), (63000, 4.2)]
+
+salary_by_tenure = defaultdict(list)
+
+for salary, tenure in salaries_and_tenures:
+    salary_by_tenure[tenure].append(salary)
+
+average_salary_by_tenure = {
+    tenure : sum(salaries) / len(salaries)
+    for tenure, salaries in salary_by_tenure.items()
+}
